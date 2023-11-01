@@ -1,0 +1,65 @@
+version: '3'
+services:
+  mysql-container:
+    image: mysql:latest
+    restart: always
+    container_name: mysql-container
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: db
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: password
+    ports:
+      - 3307:3306
+    volumes:
+      - ../mysql:/var/lib/mysql
+    networks:
+      - backend
+  mysql-product-container1:
+    image: mysql:latest
+    restart: always
+    container_name: mysql-product-container1
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: db1
+      MYSQL_USER: dung
+      MYSQL_PASSWORD: password
+    ports:
+      - 3308:3306
+    volumes:
+      - ../mysql1:/var/lib/mysql
+    networks:
+      - backend
+  mysql-product-container2:
+    image: mysql:latest
+    restart: always
+    container_name: mysql-product-container2
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: db2
+      MYSQL_USER: duy
+      MYSQL_PASSWORD: password
+    ports:
+      - 3309:3306
+    volumes:
+      - ../mysql2:/var/lib/mysql
+    networks:
+      - backend
+  mysql-product-container3:
+    image: mysql:latest
+    restart: always
+    container_name: mysql-product-container3
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: db3
+      MYSQL_USER: tung
+      MYSQL_PASSWORD: password
+    ports:
+      - 3310:3306
+    volumes:
+      - ../mysql3:/var/lib/mysql
+    networks:
+      - backend
+networks:
+  backend:
+    name: demo-app-network
