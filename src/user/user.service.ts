@@ -14,6 +14,5 @@ export class UserService {
 
   async getUser() {
     console.log(this.databaseProvider.getDataSources());
-    console.log(this.databaseProvider.count);
   }
 }

@@ -2,8 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Database } from './database.entity';
 import { Repository } from 'typeorm';
-import { newDatabaseDto, newProduct } from './database.dto';
-import { Product } from 'src/entities/product.entity';
+import { newDatabaseDto } from './database.dto';
 import { DatabaseProvider } from './database.provider';
 
 @Injectable()
@@ -14,7 +13,7 @@ export class DatabaseService {
   ) {}
   async createDb(input: newDatabaseDto) {
     const db = await this.DbRepo.save(input);
-    await this.databaseProvider.getDataSources();
+    await this.databaseProvider.addDataSource(db);
     return db;
   }
   // async createProduct(input: newProduct) {

@@ -1,4 +1,3 @@
-import { InjectDataSource } from '@nestjs/typeorm';
 import { GenericEntity } from '../entities/generic.entity';
 import {
   DataSource,
@@ -12,8 +11,7 @@ import {
 } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { Constant } from '../helper/constant';
-import { DatabaseProvider } from 'src/database/database.provider';
-import { Product } from 'src/entities/product.entity';
+import { InjectDataSource } from '@nestjs/typeorm';
 
 export abstract class GenericRepository<E extends GenericEntity> {
   /**
@@ -27,34 +25,18 @@ export abstract class GenericRepository<E extends GenericEntity> {
    */
   protected entityManager: EntityManager;
 
-  protected repositories: [] = [];
-  protected entityManagers: [] = [];
-
-  constructor(
-    @InjectDataSource() protected xDs: DataSource,
-    private readonly databaseProvider: DatabaseProvider,
-  ) {
-    // /** Get repository with datasource from typeorm */
-    // this.repository = xDs.getRepository(this.getEntityType());
-    // /** Get entity manager with datasource from typeorm */
-    // this.entityManager = xDs.manager;
-    this.getAllConnect();
+  constructor(@InjectDataSource() protected xDs: DataSource) {
+    /** Get repository with datasource from typeorm */
+    this.repository = xDs.getRepository(this.getEntityType());
+    /** Get entity manager with datasource from typeorm */
+    this.entityManager = xDs.manager;
   }
 
-  async getAllConnect() {
-    Object.keys(this.databaseProvider.dataSources).forEach((key) => {
-      this.repositories[key] = this.databaseProvider
-        .getDataSoruceByDbName(key)
-        .getRepository(Product);
-      this.entityManagers[key] =
-        this.databaseProvider.getDataSoruceByDbName(key).manager;
-    });
+  changeConnect(dataSoruce: DataSource) {
+    this.repository = dataSoruce.getRepository(this.getEntityType());
+    this.entityManager = dataSoruce.manager;
   }
 
-  changeRepository(dbName: string) {
-    this.repository = this.repositories[dbName];
-    this.entityManager = this.entityManager[dbName];
-  }
   /**
    * Verify database has entity or not
    * @param entity E

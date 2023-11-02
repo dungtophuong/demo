@@ -1,12 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { DatabaseProvider } from '../database/database.provider';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { Product } from '../entities/product.entity';
-import { newProduct } from '../database/database.dto';
 import { GenericService } from '../service/generic.service';
 import { ProductRepository } from '../repository/product.repository';
-import { DbName } from 'src/helper/enum';
+import { newProduct } from 'src/database/database.dto';
 
 @Injectable()
 export class ProductService extends GenericService<Product, ProductRepository> {
@@ -17,21 +14,20 @@ export class ProductService extends GenericService<Product, ProductRepository> {
     super(r);
   }
 
-  async getProduct() {
-    this.r.getAllConnect();
-    this.r.changeRepository(DbName.DB1_CONTAINER);
-    console.log(this.databaseProvider.dataSources);
-    const product = this.repository.findAll();
-
+  async getProduct(dbName: string) {
+    // setTimeout(() => {
+    //   this.r.changeConnect(this.databaseProvider.getDataSoruceByDbName(dbName));
+    // }, 2000);
+    this.r.changeConnect(this.databaseProvider.getDataSoruceByDbName(dbName));
+    const product = await this.findAll();
     return product;
   }
 
-  // async createProduct(input: newProduct) {
-  //   // const dataSource = this.databaseProvider.getDataSoruceByDbName(
-  //   //   DbName.DB2_CONTAINER,
-  //   // );
-  //   const dataSource = this.databaseProvider.dataSources;
-  //   // const product = (await dataSource).getRepository(Product).save(input);
-  //   return dataSource;
-  // }
+  async createProduct(dbName: string, input: newProduct) {
+    this.r.changeConnect(this.databaseProvider.getDataSoruceByDbName(dbName));
+    const productEntity = new Product();
+    Object.assign(productEntity, input);
+    const product = await this.save(productEntity);
+    return product;
+  }
 }

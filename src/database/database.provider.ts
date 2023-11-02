@@ -13,8 +13,7 @@ export class DatabaseProvider {
   ) {
     this.getDataSources();
   }
-  public dataSources: [] = [];
-  count = 0;
+  private dataSources: [] = [];
 
   async getDataSources() {
     const dbs = await this.dbRepo.find();
@@ -33,32 +32,27 @@ export class DatabaseProvider {
         logging: true,
       });
       this.dataSources[db.dbName] = await dataSource.initialize();
-
-      // return dataSource.initialize();
     });
-    this.count++;
   }
 
-  // async addDataSource(newDatabaseDto: newDatabaseDto) {
-  //   const db = await this.dbRepo.save(newDatabaseDto);
-  //   const dataSource = new DataSource({
-  //     type: 'mysql',
-  //     name: db.dbName,
-  //     host: db.host,
-  //     port: db.port,
-  //     username: db.username,
-  //     password: db.password,
-  //     database: db.dbName,
-  //     entities: [Product, User],
-  //     synchronize: false,
-  //     namingStrategy: new SnakeNamingStrategy(),
-  //     logging: true,
-  //   });
-  //   this.dataSources.push(dataSource.initialize());
-  // }
+  async addDataSource(db: Database) {
+    const dataSource = new DataSource({
+      type: 'mysql',
+      name: db.dbName,
+      host: db.host,
+      port: db.port,
+      username: db.username,
+      password: db.password,
+      database: db.dbName,
+      entities: [Product, User],
+      synchronize: false,
+      namingStrategy: new SnakeNamingStrategy(),
+      logging: true,
+    });
+    this.dataSources[db.dbName] = await dataSource.initialize();
+  }
 
-  getDataSoruceByDbName(dbName: string) {
-    console.log(Object.keys(this.dataSources));
+  getDataSoruceByDbName(dbName: string): DataSource {
     return this.dataSources[dbName];
   }
 }
